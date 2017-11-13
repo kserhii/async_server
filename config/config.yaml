@@ -1,0 +1,17 @@
+# PROJECT DEFAULT CONFIGURATION
+
+# --------- README ---------
+# If your want to create prod/dev/test configurations,
+# just create yaml file in current folder and redefine
+# only those fields that are changed.
+# Specify name of the new config in "config" arg of the
+# runserver.py script.
+# --------------------------
+
+DEBUG: true
+TESTING: false
+
+PORT: 8080
+
+LOG_ROOT_LEVEL: WARNING
+LOG_LEVEL: WARNING

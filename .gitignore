@@ -12,3 +12,7 @@ venv/
 .cache/
 
 # project files
+config/*.yaml
+!config/config.yaml
+!config/dev.yaml
+!config/test.yaml
