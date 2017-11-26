@@ -3,6 +3,7 @@ import logging
 import asyncio
 
 from aiohttp import web
+import aiohttp_autoreload
 
 __author__ = 'Serhii Kostel'
 
@@ -35,6 +36,7 @@ def create_app(config: 'dict') -> 'web.Application':
 
     if config['DEBUG'] and not config['TESTING']:
         log.warning('Run in DEBUG mode!')
+        aiohttp_autoreload.start()
 
     return app
 
