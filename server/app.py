@@ -2,8 +2,10 @@ import sys
 import logging
 import asyncio
 
-from aiohttp import web
 import aiohttp_autoreload
+from aiohttp.web import Application
+
+from server.handlers import web, api
 
 __author__ = 'Serhii Kostel'
 
@@ -14,31 +16,55 @@ LOG_DATE_FORMAT = '%d.%m %H:%M:%S'
 log = logging.getLogger('srv.app')
 
 
+# Routes
+
+routes = {
+    '/': [
+        ('GET', '/', web.index, 'index'),
+    ],
+    '/api': [
+        ('GET', '/user', api.user, 'user'),
+    ]
+}
+
+
+# Application
+
 class CreateAppError(Exception):
     pass
 
 
-# Create Application
-
-def create_app(config: 'dict') -> 'web.Application':
+def create_app(config: 'dict') -> 'Application':
     """Create server application and all necessary services.
 
     :param config: server settings
     """
-    loop = asyncio.get_event_loop()
-
     logger_configure(
         level=config['LOG_LEVEL'],
         root_level=config['LOG_ROOT_LEVEL'])
 
-    app = web.Application(loop=loop, debug=config['DEBUG'])
+    app = Application(debug=config['DEBUG'])
     app['config'] = config
 
     if config['DEBUG'] and not config['TESTING']:
         log.warning('Run in DEBUG mode!')
         aiohttp_autoreload.start()
 
+    api_app = Application()
+    app['api'] = api_app
+
+    register_routes(api_app, routes['/api'])
+    app.add_subapp('/api', api_app)
+
+    register_routes(app, routes['/'])
+
     return app
+
+
+def register_routes(app: 'Application', routes_table):
+    """Add routes handlers of the server."""
+    for method, path, handler, name in routes_table:
+        app.router.add_route(method,  path, handler, name=name)
 
 
 def logger_configure(level: 'str'='DEBUG', root_level: 'str'='DEBUG') -> 'None':
@@ -56,7 +82,7 @@ def logger_configure(level: 'str'='DEBUG', root_level: 'str'='DEBUG') -> 'None':
     logging.getLogger(LOG_BASE_NAME).setLevel(level)
 
 
-async def shutdown_tasks(app: 'web.Application') -> 'None':
+async def shutdown_tasks(app: 'Application') -> 'None':
     """Shutdown unfinished async tasks.
 
     :param app: web server application
