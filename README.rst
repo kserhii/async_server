@@ -1,8 +1,8 @@
 ==================================
-Simple Async Server
+Simple Async Web Server
 ==================================
 
-Python asynchronous server template.
+Python asynchronous server example.
 
 Key Features
 ============
@@ -18,3 +18,6 @@ Getting started
 .. code-block:: bash
 
     git clone git@github.com:kserhii/async_server.git
+    cd async_server
+    touch config/dev.yaml
+    ./runserver.py --config=dev
