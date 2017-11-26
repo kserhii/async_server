@@ -17,7 +17,7 @@ Getting started
 
 .. code-block:: bash
 
-    git clone git@github.com:kserhii/async_server.git
-    cd async_server
-    touch config/dev.yaml
+    git clone git@github.com:kserhii/simple-async-server.git
+    cd simple-async-server
+    make setup
     ./runserver.py --config=dev
